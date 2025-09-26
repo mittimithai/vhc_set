@@ -16,6 +16,11 @@ class VHCSetGame {
         
         this.initializeElements();
         this.setupEventListeners();
+
+	window.addEventListener('resize', () => {
+	    clearTimeout(this.resizeTimeout);
+	    this.resizeTimeout = setTimeout(() => this.handleResize(), 100);
+})
         this.loadStats();
     }
 
@@ -65,9 +70,8 @@ class VHCSetGame {
 	this.hs = null;
 	this.cs = null;
 
-	this.gameAreaSizePx = 500;
-	this.cardGap = 20;
-	
+	this.gameAreaSizePx =  Math.min(500, window.innerWidth * 0.9);
+	this.cardGap = window.innerWidth < 480 ? 8 : (window.innerWidth < 768 ? 10 : 20);
     }
 
     populateColorCyl() {
@@ -172,26 +176,35 @@ class VHCSetGame {
 	var retval = `rgb(${Math.round(rgb.r*255)}, ${Math.round(rgb.g*255)}, ${Math.round(rgb.b*255)})`;
 	return(retval);
     }
-    
+
     createCard(color, index) {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.dataset.index = index;
-        card.dataset.hue = color.h.toString();
-        card.dataset.chroma = color.c.toString();
-        card.dataset.lightness = color.l.toString();
+	const card = document.createElement('div');
+	card.className = 'card';
+	card.dataset.index = index;
+	card.dataset.hue = color.h.toString();
+	card.dataset.chroma = color.c.toString();
+	card.dataset.lightness = color.l.toString();
 
-        card.style.backgroundColor = this.colorToRGBString(color);
-        
-        // Set size based on current grid
-        const cardSize = Math.max(40, 580 / this.gridSize - 20);
-        card.style.width = cardSize + 'px';
-        card.style.height = cardSize + 'px';
-        
-        card.addEventListener('click', () => this.selectCard(card));
-        return card;
+	card.style.backgroundColor = this.colorToRGBString(color);
+	
+	// Dynamic size based on screen
+	const containerWidth = Math.min(500, window.innerWidth * 0.9);
+	const availableSpace = containerWidth - (this.cardGap * (this.gridSize - 1));
+	const cardSize = Math.max(44, Math.floor(availableSpace / this.gridSize));
+	
+	card.style.width = cardSize + 'px';
+	card.style.height = cardSize + 'px';
+	
+	// Add touch event handling
+	card.addEventListener('click', () => this.selectCard(card));
+	card.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent double-tap zoom
+            this.selectCard(card);
+	});
+	
+	return card;
     }
-
+ 
     selectCard(card) {
         if (card.classList.contains('matched')) {
             return;
@@ -555,30 +568,31 @@ class VHCSetGame {
     }
 
     setupGrid() {
-        const cardSize = Math.max(40, 580 / this.gridSize - 20); // Minimum 40px, scaled to fit
-        const gap = Math.max(10, 20 - this.gridSize); // Smaller gaps for larger grids
-        
-        this.cardsContainer.style.gridTemplateColumns = `repeat(${this.gridSize}, ${cardSize}px)`;
-        this.cardsContainer.style.gridTemplateRows = `repeat(${this.gridSize}, ${cardSize}px)`;
-        this.cardsContainer.style.gap = `${gap}px`;
-        
-        // Update card size in CSS
-        const cards = this.cardsContainer.querySelectorAll('.card');
-        cards.forEach(card => {
+	const containerWidth = Math.min(500, window.innerWidth * 0.9);
+	const availableSpace = containerWidth - (this.cardGap * (this.gridSize - 1));
+	const cardSize = Math.max(44, Math.floor(availableSpace / this.gridSize)); // Minimum 44px for touch
+	
+	this.cardsContainer.style.gridTemplateColumns = `repeat(${this.gridSize}, ${cardSize}px)`;
+	this.cardsContainer.style.gridTemplateRows = `repeat(${this.gridSize}, ${cardSize}px)`;
+	this.cardsContainer.style.gap = `${this.cardGap}px`;
+	
+	// Update card size in CSS
+	const cards = this.cardsContainer.querySelectorAll('.card');
+	cards.forEach(card => {
             card.style.width = cardSize + 'px';
             card.style.height = cardSize + 'px';
-        });
+	});
     }
 
     startTimer() {
-        this.timerInterval = setInterval(() => {
-            const elapsed = (Date.now() - this.gameStartTime) / 1000;
-            const maxWidth = 450; // Adjusted for new timer container width
-            const width = Math.min((elapsed / 30) * maxWidth, maxWidth); // 30 seconds max width
-            
-            this.timerLine.style.width = width + 'px';
-            this.timerText.textContent = elapsed.toFixed(1) + 's';
-        }, 100);
+	this.timerInterval = setInterval(() => {
+        const elapsed = (Date.now() - this.gameStartTime) / 1000;
+        const maxWidth = Math.min(450, window.innerWidth * 0.8); // Responsive max width
+        const width = Math.min((elapsed / 30) * maxWidth, maxWidth);
+        
+        this.timerLine.style.width = width + 'px';
+        this.timerText.textContent = elapsed.toFixed(1) + 's';
+	}, 100);
     }
 
     saveStats() {
@@ -616,6 +630,15 @@ class VHCSetGame {
         this.timerText.textContent = '0.0s';
         this.updateStats();
     }
+
+    handleResize() {
+	if (this.gameArea.style.display !== 'none') {
+            // Recalculate card gap for current screen size
+            this.cardGap = window.innerWidth < 480 ? 8 : (window.innerWidth < 768 ? 10 : 20);
+            this.setupGrid();
+	}
+    }
+
 }
 
 // Initialize game when page loads

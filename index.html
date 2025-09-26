@@ -1,7 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
+    <meta property="og:title" content="VHC Set"/>
+    <meta property="og:description" content="Set with Value, Hue and Chroma"/>
+    <meta property="og:image" content="https://www.mlorp.com/vhc_set/assets/preview.jpg"/>
+    <meta property="og:url" content="https://www.mlorp.com/index.html"/>
+    <meta property="og:image:width" content="1200"/>
+    <meta property="og:image:height" content="630"/>
+    <meta property="og:type" content="website"/>
     <meta charset="UTF-8">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VHC Set Game</title>
     
@@ -84,9 +92,11 @@
             display: grid;
             gap: 20px;
             margin-bottom: 40px;
-            //perspective: 1000px;
-            width: 600px;
-            height: 600px;
+
+	    max-width: 90vw;
+	    max-height: 70vh;
+	    justify-content: center;
+	    
         }
 
         .card {
@@ -115,11 +125,12 @@
         }
 
         .timer-container {
-            width: 500px;
-            height: 30px;
-            position: relative;
-            display: flex;
-            align-items: center;
+	    width: 90vw;
+	    max-width: 500px;
+	    height: 30px;
+	    position: relative;
+	    display: flex;
+	    align-items: center;
         }
 
         .timer-line {
@@ -288,6 +299,77 @@
             50% { opacity: 0; }
             100% { opacity: 1; }
         }
+
+	@media (max-width: 768px) {
+	    body {
+		padding: 10px;
+	    }
+    
+	    .controls {
+		margin-bottom: 20px;
+	    }
+    
+	    .cards-container {
+		gap: 10px;
+		margin-bottom: 20px;
+		max-width: 95vw;
+	    }
+	    
+	    .card {
+		/* Touch targets should be at least 44px */
+		min-width: 44px !important;
+		min-height: 44px !important;
+	    }
+	    
+	    .timer-container {
+		width: 95vw;
+	    }
+	    
+	    input[type="range"] {
+		width: 150px;
+	    }
+	    
+	    .pass-btn, .quit-btn, #startBtn, .continue-btn {
+		min-height: 44px;
+		min-width: 88px;
+		touch-action: manipulation;
+	    }
+	    
+	    .error-x {
+		font-size: 200px;
+	    }
+	    
+	    .match-notice {
+		font-size: 80px;
+	    }
+	    
+	    .achievement-name {
+		font-size: 24px;
+	    }
+	}
+
+	@media (max-width: 480px) {
+	    .cards-container {
+		gap: 8px;
+		max-width: 98vw;
+	    }
+	    
+	    .error-x {
+		font-size: 150px;
+	    }
+	    
+	    .match-notice {
+		font-size: 60px;
+	    }
+	    
+	    .achievement-name {
+		font-size: 20px;
+	    }
+	    
+	    .score-content {
+		padding: 20px;
+	    }
+}
     </style>
 </head>
 <body>
