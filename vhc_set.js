@@ -210,7 +210,7 @@ class VHCSetGame {
         card.classList.add('selected');
         this.selectedCards.push(card);
 
-	//console.log(`LCH: (${card.dataset.lightness}, ${card.dataset.chroma}, ${card.dataset.hue})`);
+	console.log(`LCH: (${card.dataset.lightness}, ${card.dataset.chroma}, ${card.dataset.hue})`);
 
         if (this.selectedCards.length === 3) {
             this.checkMatch();
@@ -225,7 +225,7 @@ class VHCSetGame {
 
         const sameLightness = lightnesses[0] === lightnesses[1] && lightnesses[1] === lightnesses[2];
         const sameSaturation = saturations[0] === saturations[1] && saturations[1] === saturations[2];
-	const sameHue = hues[0] === hues[1] && hues[1] === hues[2] && !sameSaturation;
+	const sameHue = hues[0] === hues[1] && hues[1] === hues[2] && (saturations[0]!=-0.0);
 
 
         const isMatch = sameHue || sameSaturation || sameLightness;
