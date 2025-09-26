@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VHC Set Game</title>
+    
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .controls {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .grid-size-control {
+            margin-bottom: 40px;
+        }
+
+	.color-fineness-control {
+            margin-bottom: 40px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="range"] {
+            width: 200px;
+            margin-bottom: 8px;
+        }
+
+        .difficulty-value {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        #startBtn {
+            background: transparent;
+            border: 1px solid #666;
+            color: #fff;
+            padding: 12px 24px;
+            font-family: inherit;
+            font-size: 16px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        #startBtn:hover {
+            border-color: #999;
+        }
+
+        #startBtn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cards-container {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 40px;
+            //perspective: 1000px;
+            width: 600px;
+            height: 600px;
+        }
+
+        .card {
+            border: 0px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: scale(0.8) rotateY(-90deg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: scale(1) rotateY(0deg);
+        }
+
+        .card.selected {
+            border-color: #fff;
+            transform: scale(1.05);
+        }
+
+        .card.matched {
+            opacity: 0;
+            transform: scale(0.8) rotateY(90deg);
+        }
+
+        .timer-container {
+            width: 500px;
+            height: 30px;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .timer-line {
+            height: 1px;
+            background: #666;
+            transition: width 0.1s linear;
+            position: relative;
+            flex: 1;
+        }
+
+        .timer-text {
+            font-size: 12px;
+            margin-left: 10px;
+            opacity: 0.8;
+            min-width: 40px;
+        }
+
+        .pass-btn {
+            background: transparent;
+            border: 1px solid #666;
+            color: #666;
+            padding: 4px 12px;
+            font-family: inherit;
+            font-size: 11px;
+            cursor: pointer;
+            margin-left: 15px;
+            transition: all 0.2s;
+        }
+
+        .pass-btn:hover {
+            border-color: #999;
+            color: #999;
+        }
+
+        .pass-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .quit-btn {
+            background: transparent;
+            border: 1px solid #666;
+            color: #666;
+            padding: 8px 16px;
+            font-family: inherit;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+
+        .quit-btn:hover {
+            border-color: #999;
+            color: #999;
+        }
+
+        .score-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .score-content {
+            text-align: center;
+            max-width: 600px;
+            padding: 40px;
+        }
+
+        .achievement-name {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .score-details {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .continue-btn {
+            background: transparent;
+            border: 1px solid #666;
+            color: #fff;
+            padding: 12px 24px;
+            font-family: inherit;
+            font-size: 16px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .continue-btn:hover {
+            border-color: #999;
+        }
+
+        .error-x {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 340px;
+            color: #fff;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            font-weight: bold;
+        }
+
+        .error-x.show {
+            opacity: 1;
+        }
+
+	.match-notice {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 140px;
+            color: #fff;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            font-weight: bold;
+	    text-align: center;
+	    justify-content: center;
+        }
+
+        .match-notice.show {
+            opacity: 1;
+        }
+
+
+        .stats {
+            margin-top: 40px;
+            text-align: center;
+            opacity: 0.6;
+            font-size: 12px;
+        }
+
+        .game-over {
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        .game-over h2 {
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8) rotateY(-90deg); }
+            to { opacity: 1; transform: scale(1) rotateY(0deg); }
+        }
+
+        @keyframes crossFade {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="controls" id="controls">
+        <div class="grid-size-control">
+            <label for="gridSizeSlider">Grid Size</label>
+            <input type="range" id="gridSizeSlider" min="3" max="9" value="3">
+	    <div class="color-distance-value">Grid: <span id="gridSizeText">3x3</span></div>
+        </div>
+        <div class="color-fineness-control">
+            <label for="colorFinenessSlider">Color Fineness</label>
+            <input type="range" id="colorFinenessSlider" min="1" max="9" value="1">
+            <div class="color-fineness-value">Fineness: <span id="colorFinenessText">1</span></div>
+        </div>
+
+        <button id="startBtn">Start Game</button>
+    </div>
+
+    <div class="game-area" id="gameArea" style="display: none;">
+        <div class="cards-container" id="cardsContainer"></div>
+        
+        <div class="timer-container">
+            <div class="timer-line" id="timerLine"></div>
+            <div class="timer-text" id="timerText">0.0s</div>
+            <button class="pass-btn" id="passBtn">Pass</button>
+        </div>
+
+        <button class="quit-btn" id="quitBtn">Quit</button>
+
+        <div class="game-over" id="gameOver" style="display: none;">
+            <h2>Game Complete!</h2>
+            <p>All matches found</p>
+        </div>
+    </div>
+
+    <div class="score-screen" id="scoreScreen">
+        <div class="score-content">
+            <div class="achievement-name" id="achievementName">Color Novice</div>
+            <div class="score-details" id="scoreDetails">
+                <p>Your chromatic journey begins here!</p>
+                <p>Score: <span id="finalScore">0</span></p>
+                <p>Matches: <span id="matchCount">0</span> | Avg Time: <span id="avgTime">0.0s</span></p>
+                <p>Grid Size: <span id="gridSizeDisplay">3x3</span></p>
+            </div>
+            <button class="continue-btn" id="continueBtn">Continue</button>
+        </div>
+    </div>
+
+    <div class="error-x" id="errorX">×</div>
+    <div class="match-notice" id="matchNotice">×</div>
+
+    <div class="stats" id="stats"></div>
+
+    <script type="module" src="vhc_set.js"></script>
+</body>
+</html>

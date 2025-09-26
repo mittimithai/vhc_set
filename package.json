@@ -1,0 +1,20 @@
+{
+  "name": "vhc_set",
+  "version": "1.0.0",
+  "description": "",
+  "main": "vhc_set.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "colorjs.io": "^0.5.2"
+  },
+  "devDependencies": {
+    "vite": "^7.1.3"
+  }
+}
