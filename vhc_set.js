@@ -85,7 +85,7 @@ class VHCSetGame {
 	}
 	this.ls[this.ls.length-1] = Math.min(this.lMax, this.ls.at(-1));
 
-	console.log(`vs: ${this.ls}`);
+	//console.log(`vs: ${this.ls}`);
 	
 	let hRange = this.hMax - this.hMin;
 	let hDiffScale = 8;
@@ -101,7 +101,7 @@ class VHCSetGame {
 	this.hs[this.hs.length-1] = Math.min(this.hMax, this.hs.at(-1));
 	
 	//console.log(`hRange: ${hRange}, hStep: ${hStep}, nHSteps: ${nHSteps}, colorFineness: ${this.colorFineness}`);
-	console.log(`hs: ${this.hs}`);
+	//console.log(`hs: ${this.hs}`);
 
 	let cRange = this.cMax - this.cMin;
 	let cDiffScale = 5;
@@ -117,7 +117,7 @@ class VHCSetGame {
 	this.cs[this.cs.length-1] = Math.min(this.cMax, this.cs.at(-1));
 	
 	//console.log(`cRange: ${cRange}, cStep: ${cStep}, nCSteps: ${nCSteps}, colorFineness: ${this.colorFineness}`);
-	console.log(`cs: ${this.cs}`);
+	//console.log(`cs: ${this.cs}`);
 
     }
 
@@ -210,7 +210,7 @@ class VHCSetGame {
         card.classList.add('selected');
         this.selectedCards.push(card);
 
-	console.log(`LCH: (${card.dataset.lightness}, ${card.dataset.chroma}, ${card.dataset.hue})`);
+	//console.log(`LCH: (${card.dataset.lightness}, ${card.dataset.chroma}, ${card.dataset.hue})`);
 
         if (this.selectedCards.length === 3) {
             this.checkMatch();
@@ -255,7 +255,7 @@ class VHCSetGame {
 	var i=0, mmShowStep=800;
 	
 	for(const mm of matchMessages) {
-	    console.log(`${mm}`);
+	    //console.log(`${mm}`);
 
 	    setTimeout(() => {
 		this.matchNotice.textContent = mm;
@@ -538,7 +538,7 @@ class VHCSetGame {
         for (let i = 0; i < totalCards; i++) {
             const color = this.generateRandomColor();
 
-	    console.log(`${color}`);
+	    //console.log(`${color}`);
 	    
             const card = this.createCard(color, i);
             this.cards.push(card);
